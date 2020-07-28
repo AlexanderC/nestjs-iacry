@@ -108,8 +108,15 @@ export class BookController {
   @Post('book/:id')
   async update(@Request() req) { }
 
-  // ...or the definition above might be replaced with a shorthand
+  // ...or the definition above might be replaced with a shorthand...
   @IACryFirewall({ resource: 'book:{params.id}' })
+  @UseGuards(JwtAuthGuard, IACryFirewallGuard)
+  @Post('book/:id')
+  async update(@Request() req) { }
+
+  // ...you might also combine them...
+  @IACryFirewall()
+  @IACryResource('book:{params.id}')
   @UseGuards(JwtAuthGuard, IACryFirewallGuard)
   @Post('book/:id')
   async update(@Request() req) { }
