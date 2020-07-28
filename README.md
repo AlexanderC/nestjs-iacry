@@ -17,10 +17,12 @@
 ### Installation
 
 ```sh
-npm install --save nestjs-iacry
+npm install --save nestjs-iacry sequelize-typescript
 #or
-yarn add nestjs-iacry
+yarn add nestjs-iacry sequelize-typescript
 ```
+
+> Important: `sequelize-typescript` is required if you are using `sequelize` policy storage model.
 
 ### Configuration
 
@@ -42,14 +44,19 @@ import { IACryEntity } from 'nestjs-iacry';
 // @IACryEntity({ nameField: 'role' })
 @IACryEntity() 
 @Table({})
-export default class User extends Model<User> { }
+export default class User extends Model<User> {
+  id: string;
+  role?: string; // nameField
+}
 
 // models/book.model.ts
 import { IACryEntity } from 'nestjs-iacry';
 
 @IACryEntity()
 @Table({})
-export default class Book extends Model<User> { }
+export default class Book extends Model<Book> {
+  id: string;
+}
 ```
 
 And finaly include the module and the service *(assume using [Nestjs Configuration](https://docs.nestjs.com/techniques/configuration))*:
@@ -159,6 +166,21 @@ interface PolicyInterface {
 
 > Important: `Action`, `Resource` and `Principal` values **might be negated**, 
 > which would mean that a `book:!33` would match any book but the one with ID=33.
+
+### Development
+
+Running tests:
+```bash
+npm test
+```
+
+Releasing:
+```bash
+npm run format
+npm run prebuild
+npm run release # npm run patch|minor|major
+npm run deploy
+```
 
 ### TODO
 
