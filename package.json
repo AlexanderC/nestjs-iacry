@@ -1,0 +1,103 @@
+{
+  "name": "nestjs-iacry",
+  "version": "0.0.1",
+  "private": false,
+  "description": "NestJS - an identity and access control module inspired by AWS IAM (@iac, @iam)",
+  "keywords": [
+    "nest",
+    "iac",
+    "iam",
+    "identity",
+    "control",
+    "policy",
+    "firewall"
+  ],
+  "homepage": "https://github.com/nest-modules/mailer#readme",
+  "bugs": {
+    "url": "https://github.com/nest-modules/mailer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nest-modules/mailer.git"
+  },
+  "license": "MIT",
+  "author": "Nest Modules TM",
+  "contributors": [
+    "Cristiam Díaz <c.diaz@udla.edu.co>",
+    "Eduardo Leal <eduardolleal@icloud.com>",
+    "Juan Echeverry <e.juandav@gmail.com>",
+    "Paweł Partyka <partyka95@icloud.com>",
+    "Yanarp"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc -p tsconfig.json",
+    "deploy": "sh ./publish.sh",
+    "format": "prettier **/**/*.ts --ignore-path ./.prettierignore --write",
+    "major": "npm run release -- --release-as major",
+    "minor": "npm run release -- --release-as minor",
+    "patch": "npm run release -- --release-as patch",
+    "release": "standard-version",
+    "test": "jest"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -c .commitlintrc.json -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "glob": "7.1.6",
+    "inline-css": "2.6.3",
+    "preview-email": "2.0.2"
+  },
+  "optionalDependencies": {
+    "@types/ejs": "^3.0.3",
+    "@types/pug": "2.0.4",
+    "ejs": "^3.1.2",
+    "handlebars": "^4.7.6",
+    "pug": "^2.0.4"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "9.1.1",
+    "@commitlint/config-angular": "9.1.1",
+    "@nestjs/common": "7.3.2",
+    "@nestjs/core": "7.3.2",
+    "@nestjs/testing": "7.3.2",
+    "@types/glob": "7.1.3",
+    "@types/inline-css": "0.0.33",
+    "@types/jest": "26.0.7",
+    "@types/lodash": "4.14.158",
+    "@types/nodemailer": "6.4.0",
+    "@types/pug": "2.0.4",
+    "@typescript-eslint/eslint-plugin": "3.7.0",
+    "@typescript-eslint/parser": "3.7.0",
+    "handlebars": "4.7.6",
+    "husky": "4.2.5",
+    "lint-staged": "10.2.11",
+    "jest": "26.1.0",
+    "nodemailer": "6.4.10",
+    "prettier": "2.0.5",
+    "reflect-metadata": "0.1.13",
+    "rimraf": "3.0.2",
+    "standard-version": "8.0.2",
+    "ts-jest": "26.1.3",
+    "ts-node": "8.10.2",
+    "typescript": "3.9.7"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^7.0.9",
+    "@nestjs/core": "^7.0.9",
+    "@types/ejs": "^3.0.3",
+    "@types/pug": "2.0.4",
+    "ejs": "^3.1.2",
+    "handlebars": "^4.7.6",
+    "nodemailer": "^6.4.6",
+    "pug": "^2.0.4 || ^3.0.0"
+  }
+}
