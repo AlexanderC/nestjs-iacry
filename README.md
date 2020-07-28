@@ -9,9 +9,9 @@
 </p>
 
 <p align="center">
-  <a href="npmjs.com/package/nestjs-iacry"><img src="https://img.shields.io/npm/v/nestjs-iacry.svg" alt="NPM Version" /></a>
-  <a href="npmjs.com/package/nestjs-iacry"><img src="https://img.shields.io/npm/l/nestjs-iacry.svg" alt="Package License" /></a>
-  <a href="npmjs.com/package/nestjs-iacry"><img src="https://img.shields.io/npm/dm/nestjs-iacry.svg" alt="NPM Downloads" /></a>
+  <a href="https://npmjs.com/package/nestjs-iacry"><img src="https://img.shields.io/npm/v/nestjs-iacry.svg" alt="NPM Version" /></a>
+  <a href="https://npmjs.com/package/nestjs-iacry"><img src="https://img.shields.io/npm/l/nestjs-iacry.svg" alt="Package License" /></a>
+  <a href="https://npmjs.com/package/nestjs-iacry"><img src="https://img.shields.io/npm/dm/nestjs-iacry.svg" alt="NPM Downloads" /></a>
 </p>
 
 ### Installation
