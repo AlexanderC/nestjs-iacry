@@ -12,14 +12,14 @@ export const extractDynamicIdentifier = dynamicIdentifierExtractor<Principal>(
  *      // request.{session | params | body | query | headers | ip}
  */
 export function Principal(
-  resource: string | Principal = REQUEST_USER,
+  principal: string | Principal = REQUEST_USER,
 ): MethodDecorator {
   return (
     target: object,
     key: string | symbol,
     descriptor: TypedPropertyDescriptor<any>,
   ) => {
-    Reflect.defineMetadata(PRINCIPAL_META_FIELD, resource, descriptor.value);
+    Reflect.defineMetadata(PRINCIPAL_META_FIELD, principal, descriptor.value);
     return descriptor;
   };
 }

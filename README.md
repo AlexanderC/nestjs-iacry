@@ -107,8 +107,23 @@ export class BookController {
   @UseGuards(JwtAuthGuard, IACryFirewallGuard)
   @Post('book/:id')
   async update(@Request() req) { }
+
+  // ...or the definition above might be replaced with a shorthand
+  @IACryFirewall({ resource: 'book:{params.id}' })
+  @UseGuards(JwtAuthGuard, IACryFirewallGuard)
+  @Post('book/:id')
+  async update(@Request() req) { }
 }
 ```
+
+> Important: check out the `FirewallOptions` definition below:
+> ```typescript
+> export interface FirewallOptions {
+>   action?: Action, // default "book:update" for BookController.update()
+>   resource?: Resource, // default "*"
+>   principal?: Principal, // default REQUEST_USER
+> }
+> ```
 
 Using the service:
 ```typescript

@@ -41,6 +41,7 @@ export { Entity as IACryEntity } from './decorators/entity';
 export { Action as IACryAction } from './decorators/action';
 export { Resource as IACryResource } from './decorators/resource';
 export { Principal as IACryPrincipal } from './decorators/principal';
+export { Firewall as IACryFirewall } from './decorators/firewall';
 export { FirewallGuard as IACryFirewallGuard } from './decorators/firewall.guard';
 
 /** Internals */

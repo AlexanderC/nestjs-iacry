@@ -1,5 +1,5 @@
 import { Action, DELIMITER } from '../interfaces/policy';
-import { ACTION_META_FIELD } from './constants';
+import { ACTION_META_FIELD, CTRL_SERVICE_REGEXP } from './constants';
 import { dynamicIdentifierExtractor } from './helper';
 
 export const extractDynamicIdentifier = dynamicIdentifierExtractor<Action>(
@@ -18,9 +18,13 @@ export function Action(action?: Action): MethodDecorator {
     descriptor: TypedPropertyDescriptor<any>,
   ) => {
     if (!action) {
-      action = `${target.constructor.name.toLowerCase()}${DELIMITER}${String(
-        key,
-      )}`;
+      let service = target.constructor.name;
+
+      if (CTRL_SERVICE_REGEXP.test(service)) {
+        service = service.replace(CTRL_SERVICE_REGEXP, '');
+      }
+
+      action = `${service.toLowerCase()}${DELIMITER}${String(key)}`;
     }
 
     Reflect.defineMetadata(ACTION_META_FIELD, action, descriptor.value);
