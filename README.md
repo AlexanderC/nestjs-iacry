@@ -156,10 +156,10 @@ const deletedPoliciesCount = await firewall.reset(user);
 Structure:
 ```typescript
 interface PolicyInterface {
-  Sid?: string, // policy identified
+  Sid?: string, // policy identifier
   Effect: 'Allow' | 'Deny', // Allow | Deny
-  Action: string | { service: string, action: string } | Array<string | { service: string, action: string }>, // What Action: e.g. "book:update"
-  Resource?: string | { entity: string, id: number | string } | Array<string | { entity: string, id: number | string }>, // Object of the Action: e.g. "book:33"
+  Action: string | { service: string, action: string } | Array<string | { service: string, action: string }>, // Which action: e.g. "book:update"
+  Resource?: string | { entity: string, id: number | string } | Array<string | { entity: string, id: number | string }>, // Action object: e.g. "book:33"
   Principal?: string | { entity: string, id: number | string } | Array<string | { entity: string, id: number | string }>, // Whom: e.g. "user:1"
 }
 ```
