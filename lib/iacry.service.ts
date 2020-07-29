@@ -23,6 +23,11 @@ import {
   Principal,
   PrincipalObject,
   PRINCIPAL,
+  ACTION,
+  RESOURCE,
+  EFFECT,
+  Effect,
+  SID,
 } from './interfaces/policy';
 import { CoreHelper } from './helpers/core';
 import { Entity, isEntity, toDynamicIdentifier } from './decorators/entity';
@@ -116,6 +121,45 @@ export class CoreService extends CoreHelper {
   }
 
   /**
+   * @use grant(
+   *        'book:update' | { service: 'book', action: 'update' },
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity
+   *        'book:33' | { entity: 'book', id: 33 } | new BookModel(id=33):@\Entity,
+   *      )
+   *      grant(
+   *        'book:update' | { service: 'book', action: 'update' },
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity
+   *        'book:33' | { entity: 'book', id: 33 } | new BookModel(id=33):@\Entity
+   *        Effect.DENY,
+   *        'DenyUpdatingBook33ByUser1'
+   *      )
+   */
+  async grant(
+    rawAction: Action | ActionObject, // e.g. book:update
+    rawPrincipal: Principal | PrincipalObject | Entity | object, // e.g. user:1
+    rawResource: Resource | ResourceObject | Entity | object = CoreHelper.ANY, // e.g. book:1
+    effect: Effect = Effect.ALLOW,
+    sid?: string,
+  ): Promise<number> {
+    const resource = isEntity(rawResource)
+      ? <ResourceObject>toDynamicIdentifier(rawResource)
+      : <Resource | ResourceObject>rawResource;
+    const principal = isEntity(rawPrincipal)
+      ? <PrincipalObject>toDynamicIdentifier(rawPrincipal)
+      : <Principal | PrincipalObject>rawPrincipal;
+
+    return this.attach(rawPrincipal, [
+      {
+        [SID]: sid,
+        [EFFECT]: effect,
+        [ACTION]: rawAction,
+        [RESOURCE]: resource,
+        [PRINCIPAL]: principal,
+      },
+    ]);
+  }
+
+  /**
    * @use isGranted(
    *        'book:update' | { service: 'book', action: 'update' },
    *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity
@@ -137,10 +181,10 @@ export class CoreService extends CoreHelper {
         throw new BaseError(`Unrecognized firewall rule: ${rule}`);
     }
 
-    let resource = isEntity(rawResource)
+    const resource = isEntity(rawResource)
       ? <ResourceObject>toDynamicIdentifier(rawResource)
       : <Resource | ResourceObject>rawResource;
-    let principal = isEntity(rawPrincipal)
+    const principal = isEntity(rawPrincipal)
       ? <PrincipalObject>toDynamicIdentifier(rawPrincipal)
       : <Principal | PrincipalObject>rawPrincipal;
 

@@ -14,6 +14,7 @@ export const DYNAMIC_IDENTIFIER_PROPS_MAPPING = {
 export const REQUIRED_PROPS = [EFFECT, ACTION];
 export const DELIMITER = ':';
 export const NEGATION = '!';
+export const OR = '|';
 
 export enum Effect {
   ALLOW = 'Allow',

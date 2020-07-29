@@ -11,6 +11,8 @@ import {
   PRINCIPAL,
   NEGATION,
   DYNAMIC_IDENTIFIER_PROPS_MAPPING,
+  ANY,
+  OR,
 } from './interfaces/policy';
 import { MatcherResult } from './interfaces/matcher-result';
 import { Policy } from './policy';
@@ -98,21 +100,26 @@ export class Matcher extends CoreHelper implements MatcherInterface {
     );
   }
 
-  private matchItem(rawSource: string, rawTarget: string): boolean {
-    const source =
-      !this.strict && typeof rawSource === 'string'
-        ? rawSource.toLowerCase()
-        : rawSource;
-    const target =
-      !this.strict && typeof rawTarget === 'string'
-        ? rawTarget.toLowerCase()
-        : rawTarget;
+  private matchItem(
+    rawSource: string | number | ANY,
+    rawTarget: string | number | ANY,
+  ): boolean {
+    const sourceVector = this.normalize(rawSource);
+    const targetVector = this.normalize(rawTarget);
 
-    return (
-      source === Policy.ANY ||
-      target === Policy.ANY ||
-      this.matchSingle(source, target)
-    );
+    for (const source of sourceVector) {
+      for (const target of targetVector) {
+        if (
+          source === Policy.ANY ||
+          target === Policy.ANY ||
+          this.matchSingle(source, target)
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   private matchSingle(source, target) {
@@ -125,6 +132,14 @@ export class Matcher extends CoreHelper implements MatcherInterface {
     } else {
       return source !== this.extractNegated(target);
     }
+  }
+
+  private normalize(rawValue: string | number | ANY): Array<string | ANY> {
+    let value = rawValue.toString();
+    return (this.strict ? value : value.toLowerCase())
+      .split(OR)
+      .map((x) => x.trim())
+      .filter(Boolean);
   }
 
   private extractNegated(rawValue: string): string {

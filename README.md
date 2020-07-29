@@ -167,6 +167,8 @@ const attachedPoliciesCount = await firewall.attach(user, [
   // deny deleting books to all users
   { Effect: Effect.DENY, Action: 'book:delete', Principal: ['user:*'] },
 ]);
+// oneliner to allow user patching and updating but deleting the book
+const attachedPoliciesCount = await firewall.grant('book:patch|update|!delete', user, book);
 const policies = await firewall.retrieve(user);
 const deletedPoliciesCount = await firewall.reset(user);
 ```
@@ -186,8 +188,12 @@ interface PolicyInterface {
 }
 ```
 
-> Important: `Action`, `Resource` and `Principal` values **might be negated**, 
-> which would mean that a `book:!33` would match any book but the one with ID=33.
+Syntax Sugar:
+
+- **DIs might be negated** which would mean that a `book:!33` would match any book but the one with ID=33.
+- **DIs might be piped/or-ed** which would mean that a `book:create|update|!delete` would allow creating and updating BUT deleting a book.
+
+> **Dynamic Identifiers** or **DIs** are considered `Action`, `Resource` and `Principal` properties.
 
 ### Development
 
@@ -208,9 +214,9 @@ npm run deploy
 
 - [ ] Implement policy conditional statements (e.g. update books that the user created himself)
 - [ ] Add caching for dynamic policy storage (e.g. `ioredis` for `sequelize`)
-- [ ] Add complehensive Documentation
 - [ ] Add more built in conditional matchers to cover basic use-cases
 - [ ] Cover most of codebase w/ tests
+- [ ] Add complehensive Documentation
 
 ### Contributing
 
