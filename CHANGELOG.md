@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.3...v0.0.4) (2020-07-29)
+
+
+### Features
+
+* Add ability to pipe DIs val values ([7cf5456](https://github.com/AlexanderC/nestjs-iacry/commit/7cf5456482db0b63da057c8ad0a8b3ccc04f8a41))
+
 ### [0.0.3](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.2...v0.0.3) (2020-07-29)
 
 
