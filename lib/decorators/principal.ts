@@ -11,15 +11,17 @@ export const extractDynamicIdentifier = dynamicIdentifierExtractor<Principal>(
  *      @Principal('user:{user.id}')
  *      // request.{session | params | body | query | headers | ip}
  */
-export function Principal(
-  principal: string | Principal = REQUEST_USER,
-): MethodDecorator {
+export function Principal(principal?: string | Principal): MethodDecorator {
   return (
     target: object,
     key: string | symbol,
     descriptor: TypedPropertyDescriptor<any>,
   ) => {
-    Reflect.defineMetadata(PRINCIPAL_META_FIELD, principal, descriptor.value);
+    Reflect.defineMetadata(
+      PRINCIPAL_META_FIELD,
+      principal || REQUEST_USER,
+      descriptor.value,
+    );
     return descriptor;
   };
 }

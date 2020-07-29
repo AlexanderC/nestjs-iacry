@@ -36,22 +36,24 @@ export class CoreService extends CoreHelper {
     super();
 
     // initialize persistent storage
-    switch (typeof options.storage) {
-      case 'string':
-        switch (options.storage.toLowerCase()) {
-          case SEQUELIZE_STORAGE:
-            this.storage.storages.push(
-              new SequelizeStorage(options.storageRepository),
-            );
-            break;
-          default:
-            throw new BaseError(
-              `Unrecognized  PolicyInterface Storage type: ${options.storage}`,
-            );
-        }
-        break;
-      default:
-        this.storage.storages.push(<PolicyStorage>options.storage);
+    if (options.storage) {
+      switch (typeof options.storage) {
+        case 'string':
+          switch (options.storage.toLowerCase()) {
+            case SEQUELIZE_STORAGE:
+              this.storage.storages.push(
+                new SequelizeStorage(options.storageRepository),
+              );
+              break;
+            default:
+              throw new BaseError(
+                `Unrecognized  PolicyInterface Storage type: ${options.storage}`,
+              );
+          }
+          break;
+        default:
+          this.storage.storages.push(<PolicyStorage>options.storage);
+      }
     }
 
     // initialize hardcoded storage

@@ -47,9 +47,9 @@ export function dynamicIdentifierExtractor<T>(
       return null;
     }
 
-    const value = Reflect.getMetadata(metadataField, target).toString();
+    const value = Reflect.getMetadata(metadataField, target);
 
-    if (!ctx) {
+    if (!ctx || typeof value !== 'string') {
       return value;
     }
 

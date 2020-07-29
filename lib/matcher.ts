@@ -99,8 +99,14 @@ export class Matcher extends CoreHelper implements MatcherInterface {
   }
 
   private matchItem(rawSource: string, rawTarget: string): boolean {
-    const source = this.strict ? rawSource : rawSource.toLowerCase();
-    const target = this.strict ? rawTarget : rawTarget.toLowerCase();
+    const source =
+      !this.strict && typeof rawSource === 'string'
+        ? rawSource.toLowerCase()
+        : rawSource;
+    const target =
+      !this.strict && typeof rawTarget === 'string'
+        ? rawTarget.toLowerCase()
+        : rawTarget;
 
     return (
       source === Policy.ANY ||

@@ -1,5 +1,4 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { DecoratorError } from '../errors/decorator.error';
 import { CoreService } from '../iacry.service';
 import { extractDynamicIdentifier as actionExtractor } from './action';
@@ -18,10 +17,7 @@ import { extractDynamicIdentifier as principalExtractor } from './principal';
  */
 @Injectable()
 export class FirewallGuard implements CanActivate {
-  constructor(
-    private reflector: Reflector,
-    private readonly service: CoreService,
-  ) {}
+  constructor(private readonly service: CoreService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const action = actionExtractor(context.getHandler(), context);
@@ -30,7 +26,7 @@ export class FirewallGuard implements CanActivate {
 
     if (!action || !principal) {
       throw new DecoratorError(
-        'You must decorate your controller with at least @IACryAction and @IACryResource decorators',
+        'You must decorate your controller with @IACryFirewall or at least @IACryAction and @IACryResource decorators',
       );
     }
 
