@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* Fix Firewall shorthand ([bf2f17a](https://github.com/AlexanderC/nestjs-iacry/commit/bf2f17a39977d0541b79fd134394638abef13524))
+* Fix policy decorators ([bf2f17a](https://github.com/AlexanderC/nestjs-iacry/commit/bf2f17a39977d0541b79fd134394638abef13524))
 
 ### 0.0.1 (2020-07-28)
 
