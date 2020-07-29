@@ -205,7 +205,6 @@ npm test
 Releasing:
 ```bash
 npm run format
-npm run prebuild
 npm run release # npm run patch|minor|major
 npm run deploy
 ```
