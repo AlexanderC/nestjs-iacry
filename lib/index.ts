@@ -4,6 +4,7 @@ export { CoreModule as IACryModule } from './iacry.module';
 /** Constants **/
 export {
   SEQUELIZE_STORAGE,
+  IOREDIS_CACHE,
   IS_ALLOWED,
   IS_ALLOWED_ANY,
   IS_ALLOWED_IMPLICIT,
@@ -29,6 +30,7 @@ export {
   DynamicIdentifier,
   DynamicIdentifierVector,
 } from './interfaces/policy';
+export { Cache } from './storages/cache/cache.interface';
 
 /** Services **/
 export { CoreService as IACryService } from './iacry.service';

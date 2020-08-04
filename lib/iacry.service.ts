@@ -10,6 +10,7 @@ import { Options } from './interfaces/module.options';
 import {
   IACRY_OPTIONS,
   SEQUELIZE_STORAGE,
+  IOREDIS_CACHE,
   IS_ALLOWED,
   IS_ALLOWED_ANY,
   IS_ALLOWED_IMPLICIT,
@@ -31,11 +32,14 @@ import {
 } from './interfaces/policy';
 import { CoreHelper } from './helpers/core';
 import { Entity, isEntity, toDynamicIdentifier } from './decorators/entity';
+import { Cache } from './storages/cache/cache.interface';
+import { IoRedis } from './storages/cache/ioredis';
+import { CachedStorage } from './storages/cached.storage';
 
 @Injectable()
 export class CoreService extends CoreHelper {
   public firewall: Firewall;
-  public storage: MultipleStorage = new MultipleStorage();
+  public storage: PolicyStorage = new MultipleStorage();
 
   constructor(@Inject(IACRY_OPTIONS) private readonly options: Options) {
     super();
@@ -46,24 +50,54 @@ export class CoreService extends CoreHelper {
         case 'string':
           switch (options.storage.toLowerCase()) {
             case SEQUELIZE_STORAGE:
-              this.storage.storages.push(
+              (this.storage as MultipleStorage).storages.push(
                 new SequelizeStorage(options.storageRepository),
               );
               break;
             default:
               throw new BaseError(
-                `Unrecognized  PolicyInterface Storage type: ${options.storage}`,
+                `Unrecognized PolicyInterface Storage type: ${options.storage}`,
               );
           }
           break;
         default:
-          this.storage.storages.push(<PolicyStorage>options.storage);
+          (this.storage as MultipleStorage).storages.push(
+            <PolicyStorage>options.storage,
+          );
       }
     }
 
     // initialize hardcoded storage
     if (options.policies) {
-      this.storage.storages.push(new HardcodedMemoryStorage(options.policies));
+      (this.storage as MultipleStorage).storages.push(
+        new HardcodedMemoryStorage(options.policies),
+      );
+    }
+
+    if (options.cache) {
+      let cache: Cache;
+
+      switch (typeof options.cache) {
+        case 'string':
+          switch (options.cache.toLowerCase()) {
+            case IOREDIS_CACHE:
+              cache = new IoRedis(options.cacheClient);
+              break;
+            default:
+              throw new BaseError(
+                `Unrecognized PolicyCache type: ${options.cache}`,
+              );
+          }
+          break;
+        default:
+          cache = <Cache>options.cache;
+      }
+
+      this.storage = new CachedStorage(
+        this.storage,
+        cache,
+        options.cacheOptions,
+      );
     }
 
     this.firewall = Firewall.create(this.storage, new Matcher(options.strict));

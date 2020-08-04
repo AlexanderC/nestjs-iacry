@@ -62,19 +62,22 @@ export default class Book extends Model<Book> {
 And finaly include the module and the service *(assume using [Nestjs Configuration](https://docs.nestjs.com/techniques/configuration))*:
 ```typescript
 // src/app.module.ts
-import { IACryModule, Effect, PolicyInterface, SEQUELIZE_STORAGE } from 'nestjs-iacry';
+import { IACryModule, Effect, PolicyInterface, SEQUELIZE_STORAGE, IOREDIS_CACHE } from 'nestjs-iacry';
 import PolicyStorage from '../models/policy-storage.model';
 
 @Module({
   imports: [
     IACryModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
+      imports: [ConfigModule, RedisModule],
+      inject: [ConfigService, RedisService],
+      useFactory: async (configService: ConfigService, redisService: RedisService) => {
         return {
           storage: SEQUELIZE_STORAGE, // dynamic policy storage (e.g. sequelize)
           storageRepository: PolicyStorage, // if database storage specified
-          policies: [ // OPTIONAL: some hardcoded policies...
+          cache: IOREDIS_CACHE, // dynamic policy storage cache (e.g. ioredis)
+          cacheClient: <IORedis.Redis>await redisService.getClient(), // if cache adapter was specified
+          cacheOptions: { expire: 600 }, // policy cache expires in 10 minutes (default 1 hour)
+          policies: [ // some hardcoded policies...
             ...configService.get<Array<string | PolicyInterface>>('policies'),
             {
               // allow any action to be performed by the user
@@ -97,7 +100,7 @@ Using firewall guard in controllers:
 ```typescript
 // src/some-fancy.controller.ts
 import { Controller, Post, UseGuards } from '@nestjs/common';
-import { IACryAction, IACryResource, IACryPrincipal, IACryFirewallGuard } from 'nestjs-iacry';
+import { IACryAction, IACryResource, IACryPrincipal, IACryFirewall, IACryFirewallGuard } from 'nestjs-iacry';
 
 @Controller()
 export class BookController {
@@ -215,7 +218,7 @@ npm run deploy
 - [ ] Add caching for dynamic policy storage (e.g. `ioredis` for `sequelize`)
 - [ ] Add more built in conditional matchers to cover basic use-cases
 - [ ] Cover most of codebase w/ tests
-- [ ] Add complehensive Documentation
+- [ ] Add comprehensive Documentation
 
 ### Contributing
 
