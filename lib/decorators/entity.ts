@@ -72,6 +72,13 @@ export function Entity(options?: EntityOptions): ClassDecorator {
       );
     }
 
+    // @todo: Think how to avoid it...
+    target.prototype.toDynamicIdentifier = function ():
+      | ResourceObject
+      | PrincipalObject {
+      return toDynamicIdentifier(this);
+    };
+
     Reflect.defineMetadata(
       ENTITY_META_FIELD,
       (instance: object) =>

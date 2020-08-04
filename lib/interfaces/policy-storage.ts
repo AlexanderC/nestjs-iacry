@@ -12,4 +12,13 @@ export interface PolicyStorage {
     rawPolicies: Array<string | PolicyInterface>,
   ): Promise<number>;
   purge(principal: PrincipalObject): Promise<number>;
+  fetchBySid(
+    sid: string,
+    principal: PrincipalObject,
+  ): Promise<Array<string | PolicyInterface>>;
+  saveBySid(
+    sid: string,
+    principal: PrincipalObject,
+    rawPolicies: Array<string | PolicyInterface>,
+  ): Promise<number>;
 }

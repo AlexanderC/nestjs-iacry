@@ -71,8 +71,44 @@ export class CachedStorage implements PolicyStorage {
     return this.storage.purge(principal);
   }
 
-  private async purgeCache(principal: PrincipalObject): Promise<void> {
-    const key = this.key(principal);
+  async fetchBySid(
+    sid: string,
+    principal: PrincipalObject,
+  ): Promise<Array<string | PolicyInterface>> {
+    const key = this.key(principal, sid);
+
+    if (await this.cache.has(key)) {
+      return this.decode(await this.cache.get(key));
+    }
+
+    const policies = await this.storage.fetchBySid(sid, principal);
+
+    if (
+      !(await this.cache.set(key, this.encode(policies), this.options.expire))
+    ) {
+      throw new CacheError(`Unable to store policy cache for key: ${key}`);
+    }
+
+    return policies;
+  }
+
+  async saveBySid(
+    sid: string,
+    principal: PrincipalObject,
+    rawPolicies: Array<string | PolicyInterface>,
+  ): Promise<number> {
+    await Promise.all([
+      this.purgeCache(principal),
+      this.purgeCache(principal, sid),
+    ]);
+    return this.storage.saveBySid(sid, principal, rawPolicies);
+  }
+
+  private async purgeCache(
+    principal: PrincipalObject,
+    sid?: string,
+  ): Promise<void> {
+    const key = this.key(principal, sid);
 
     if (await this.cache.has(key)) {
       if (!(await this.cache.remove(key))) {
@@ -89,7 +125,8 @@ export class CachedStorage implements PolicyStorage {
     return JSON.parse(rawPolicies);
   }
 
-  private key(principal: PrincipalObject): string {
-    return `${this.options.prefix}${principal.entity}/${principal.id}`;
+  private key(principal: PrincipalObject, sid?: string): string {
+    const key = `${this.options.prefix}${principal.entity}/${principal.id}`;
+    return sid ? `${key}/${sid}` : key;
   }
 }

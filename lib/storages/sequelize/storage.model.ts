@@ -9,6 +9,7 @@ import {
   AllowNull,
   PrimaryKey,
   AutoIncrement,
+  Index,
 } from 'sequelize-typescript';
 import { Op } from 'sequelize';
 import { PrincipalObject, PolicyInterface } from '../../interfaces/policy';
@@ -16,7 +17,13 @@ import { CoreHelper } from '../../helpers/core';
 
 @Table({
   timestamps: true, // add the timestamp attributes (updatedAt, createdAt)
-  paranoid: true, // don't delete database entries but set the newly added attribute deletedAt
+  indexes: [
+    {
+      name: 'entity_id_sid',
+      fields: ['entity', 'id', 'sid'],
+      unique: true,
+    },
+  ],
 })
 export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
   implements PrincipalObject {
@@ -24,6 +31,10 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
   @AutoIncrement
   @Column
   pk: number;
+
+  @AllowNull(true)
+  @Column
+  sid: string;
 
   @AllowNull(true)
   @Column
@@ -42,9 +53,6 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
   @UpdatedAt
   updatedAt: Date;
 
-  @DeletedAt
-  deletedAt: Date;
-
   static async savePrincipalPolicies(
     principal: PrincipalObject,
     rawPolicies: Array<string | PolicyInterface>,
@@ -55,17 +63,37 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
     }
 
     const result = await this.bulkCreate(
-      rawPolicies.map((policy) => ({
+      rawPolicies.map((rawPolicy) => ({
         entity:
           principal.entity === CoreHelper.ANY
             ? null
             : this.normalizePolicyItem(principal.entity),
         id: principal.id === CoreHelper.ANY ? null : principal.id,
-        policy: typeof policy === 'string' ? policy : JSON.stringify(policy),
+        policy:
+          typeof rawPolicy === 'string' ? rawPolicy : JSON.stringify(rawPolicy),
       })),
     );
 
     return result.length;
+  }
+
+  static async savePrincipalPolicyBySid(
+    principal: PrincipalObject,
+    sid: string,
+    rawPolicy: string | PolicyInterface,
+  ): Promise<number> {
+    await this.upsert({
+      sid,
+      entity:
+        principal.entity === CoreHelper.ANY
+          ? null
+          : this.normalizePolicyItem(principal.entity),
+      id: principal.id === CoreHelper.ANY ? null : principal.id,
+      policy:
+        typeof rawPolicy === 'string' ? rawPolicy : JSON.stringify(rawPolicy),
+    });
+
+    return 1;
   }
 
   static async destroyByPrincipal(principal: PrincipalObject): Promise<number> {
@@ -106,6 +134,7 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
 
   static async findByPrincipal(
     principal: PrincipalObject,
+    sid?: string,
   ): Promise<Array<string>> {
     const payload = {
       where: {
@@ -115,9 +144,14 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
         id: {
           [Op.or]: [null], // select for global scope
         },
+        sid,
       },
       attributes: ['policy'],
     };
+
+    if (!sid) {
+      delete payload.where.sid;
+    }
 
     // allow any entity
     if (principal.entity === CoreHelper.ANY) {
@@ -135,8 +169,8 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
       payload.where.id[Op.or].push(principal.id);
     }
 
-    // remove empty where clause
-    if (!payload.where.entity && !payload.where.id) {
+    // remove an empty where clause
+    if (!payload.where.entity && !payload.where.id && !payload.where.sid) {
       delete payload.where;
     }
 
@@ -144,7 +178,7 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
     return entries.map(({ policy }) => policy);
   }
 
-  static normalizePolicyItem(item: string): string {
+  private static normalizePolicyItem(item: string): string {
     return item.toLowerCase();
   }
 }

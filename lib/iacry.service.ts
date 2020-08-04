@@ -3,7 +3,7 @@ import { Firewall } from './firewall';
 import { PolicyStorage } from './interfaces/policy-storage';
 import { SequelizeStorage } from './storages/sequelize.storage';
 import { MultipleStorage } from './storages/multiple.storage';
-import { HardcodedMemoryStorage } from './storages/hardcoded-memory.storage';
+import { GlobalStorage } from './storages/global.storage';
 import { BaseError } from './errors/iacry.error';
 import { Matcher } from './matcher';
 import { Options } from './interfaces/module.options';
@@ -67,10 +67,10 @@ export class CoreService extends CoreHelper {
       }
     }
 
-    // initialize hardcoded storage
+    // initialize global storage
     if (options.policies) {
       (this.storage as MultipleStorage).storages.push(
-        new HardcodedMemoryStorage(options.policies),
+        new GlobalStorage(options.policies),
       );
     }
 
@@ -152,6 +152,42 @@ export class CoreService extends CoreHelper {
         ? <PolicyInterface>JSON.parse(rawPolicy)
         : rawPolicy,
     );
+  }
+
+  async retrieveBySid(
+    sid: string,
+    rawPrincipal: Principal | PrincipalObject | Entity | object,
+  ): Promise<Array<PolicyInterface>> {
+    const principal = isEntity(rawPrincipal)
+      ? <PrincipalObject>toDynamicIdentifier(rawPrincipal)
+      : <PrincipalObject>(
+          this.normalizeDynamicIdentifier(
+            <Principal | PrincipalObject>rawPrincipal,
+            PRINCIPAL,
+          )
+        );
+    const rawPolicies = await this.storage.fetchBySid(sid, principal);
+    return rawPolicies.map((rawPolicy) =>
+      typeof rawPolicy === 'string'
+        ? <PolicyInterface>JSON.parse(rawPolicy)
+        : rawPolicy,
+    );
+  }
+
+  async upsertBySid(
+    sid: string,
+    rawPrincipal: Principal | PrincipalObject | Entity | object,
+    rawPolicies?: Array<string | PolicyInterface>,
+  ): Promise<number> {
+    const principal = isEntity(rawPrincipal)
+      ? <PrincipalObject>toDynamicIdentifier(rawPrincipal)
+      : <PrincipalObject>(
+          this.normalizeDynamicIdentifier(
+            <Principal | PrincipalObject>rawPrincipal,
+            PRINCIPAL,
+          )
+        );
+    return this.storage.saveBySid(sid, principal, rawPolicies);
   }
 
   /**

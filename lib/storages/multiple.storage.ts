@@ -65,4 +65,38 @@ export class MultipleStorage implements PolicyStorage {
       return Math.max(accumulator, current);
     });
   }
+
+  async fetchBySid(
+    sid: string,
+    principal: PrincipalObject,
+  ): Promise<Array<string | PolicyInterface>> {
+    const result = await Promise.all(
+      this.storages.map((storage) => storage.fetchBySid(sid, principal)),
+    );
+
+    return result.reduce(
+      (
+        accumulator: Array<string | PolicyInterface>,
+        current: Array<string | PolicyInterface>,
+      ) => {
+        return accumulator.concat(...current);
+      },
+    );
+  }
+
+  async saveBySid(
+    sid: string,
+    principal: PrincipalObject,
+    rawPolicies: Array<string | PolicyInterface>,
+  ): Promise<number> {
+    const result = await Promise.all(
+      this.storages
+        .filter((storage) => !storage.readonly)
+        .map((storage) => storage.saveBySid(sid, principal, rawPolicies)),
+    );
+
+    return result.reduce((accumulator: number, current: number) => {
+      return Math.min(accumulator, current);
+    });
+  }
 }

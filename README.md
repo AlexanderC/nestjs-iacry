@@ -161,6 +161,7 @@ import { IACryService, Effect } from 'nestjs-iacry';
 
 let firewall: IACryService;
 let user: User;
+let book: Book;
 
 const attachedPoliciesCount = await firewall.attach(user, [
   // Allow any action on the book service
@@ -170,10 +171,48 @@ const attachedPoliciesCount = await firewall.attach(user, [
   // deny deleting books to all users
   { Effect: Effect.DENY, Action: 'book:delete', Principal: ['user:*'] },
 ]);
+const attachedPoliciesCount = await firewall.upsertBySid(
+  'Some policy Sid (mainly a name)',
+  user,
+  [{ Sid: 'Some policy Sid (mainly a name)', Effect: Effect.ALLOW, Action: 'book:*'}],
+);
 // oneliner to allow user patching and updating but deleting the book
 const attachedPoliciesCount = await firewall.grant('book:patch|update|!delete', user, book);
 const policies = await firewall.retrieve(user);
+const policies = await firewall.retrieveBySid('Some policy Sid (mainly a name)', user);
 const deletedPoliciesCount = await firewall.reset(user);
+```
+
+> Important: When using `sequelize` storage- `firewall.upsertBySid()` supports storing one single 
+> policy per `Sid` for a certain `principal`, throwing a `SequelizeError` otherwise.
+
+Managing a policy by it's Sid might be useful when automating policy assignments.
+E.g. granting `book:update|patch|delete` on books created by the user is possible by upserting
+a system managed policy w/ the sid `system:user:book` as follows:
+
+```typescript
+import { IACryService, Effect } from 'nestjs-iacry';
+
+let firewall: IACryService;
+let user: User;
+let newBook: Book;
+
+const BOOK_SID = 'system:user:book';
+let policies = await firewall.retrieveBySid(BOOK_SID, user);
+
+if (policies.length > 0) {
+  policies[0] = policies[0].toJSON();
+  policies[0].Resource.push(newBook.toDynamicIdentifier());
+} else {
+  policies = [{
+    Sid: BOOK_SID, // frankly speaking this is optional o_O...
+    Effect: Effect.ALLOW,
+    Action: 'book:update|patch|delete',
+    Resource: [newBook.toDynamicIdentifier()],
+  }];
+}
+
+await firewall.upsertBySid(BOOK_SID, user, policies);
 ```
 
 ### Documentation
@@ -214,6 +253,7 @@ npm run deploy
 
 ### TODO
 
+- [ ] Implement an abstraction over the system managed policies
 - [ ] Implement policy conditional statements (e.g. update books that the user created himself)
 - [ ] Add more built in conditional matchers to cover basic use-cases
 - [ ] Cover most of codebase w/ tests

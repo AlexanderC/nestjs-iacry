@@ -6,6 +6,14 @@ export interface Storage {
     rawPolicies: Array<string | PolicyInterface>,
     attach?: boolean,
   ): Promise<number>;
-  findByPrincipal(principal: PrincipalObject): Promise<Array<string>>;
+  savePrincipalPolicyBySid(
+    principal: PrincipalObject,
+    sid: string,
+    rawPolicy: string | PolicyInterface,
+  ): Promise<number>;
+  findByPrincipal(
+    principal: PrincipalObject,
+    sid?: string,
+  ): Promise<Array<string>>;
   destroyByPrincipal(principal: PrincipalObject): Promise<number>;
 }
