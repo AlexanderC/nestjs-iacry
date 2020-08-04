@@ -215,7 +215,6 @@ npm run deploy
 ### TODO
 
 - [ ] Implement policy conditional statements (e.g. update books that the user created himself)
-- [ ] Add caching for dynamic policy storage (e.g. `ioredis` for `sequelize`)
 - [ ] Add more built in conditional matchers to cover basic use-cases
 - [ ] Cover most of codebase w/ tests
 - [ ] Add comprehensive Documentation
