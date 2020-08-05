@@ -2,7 +2,6 @@ import { PrincipalObject } from '../interfaces/policy';
 import { PolicyStorage } from '../interfaces/policy-storage';
 import { PolicyInterface } from '../interfaces/policy';
 import { Storage } from './sequelize/storage.interface';
-import { SequelizeError } from './sequelize/sequelize.error';
 
 export class SequelizeStorage implements PolicyStorage {
   readonly readonly: boolean = false;
@@ -13,6 +12,13 @@ export class SequelizeStorage implements PolicyStorage {
     principal: PrincipalObject,
   ): Promise<Array<string | PolicyInterface>> {
     return this.repository.findByPrincipal(principal);
+  }
+
+  async fetchBySid(
+    sid: string,
+    principal: PrincipalObject,
+  ): Promise<Array<string | PolicyInterface>> {
+    return this.repository.findByPrincipal(principal, sid);
   }
 
   async save(
@@ -30,18 +36,11 @@ export class SequelizeStorage implements PolicyStorage {
     principal: PrincipalObject,
     rawPolicies: Array<string | PolicyInterface>,
   ): Promise<number> {
-    return this.repository.savePrincipalPolicies(principal, rawPolicies);
-  }
-
-  async purge(principal: PrincipalObject): Promise<number> {
-    return this.repository.destroyByPrincipal(principal);
-  }
-
-  async fetchBySid(
-    sid: string,
-    principal: PrincipalObject,
-  ): Promise<Array<string | PolicyInterface>> {
-    return this.repository.findByPrincipal(principal, sid);
+    return this.repository.savePrincipalPolicies(
+      principal,
+      rawPolicies,
+      /*attach =*/ true,
+    );
   }
 
   saveBySid(
@@ -49,17 +48,16 @@ export class SequelizeStorage implements PolicyStorage {
     principal: PrincipalObject,
     rawPolicies: Array<string | PolicyInterface>,
   ): Promise<number> {
-    if (rawPolicies.length !== 1) {
-      throw new SequelizeError(
-        `SequelizeStorage.saveBySid() accepts exactly 1 policy, ${rawPolicies.length} provided`,
-      );
-    }
-
-    return this.repository.savePrincipalPolicyBySid(
+    return this.repository.savePrincipalPolicies(
       principal,
+      rawPolicies,
+      /*attach =*/ false,
       sid,
-      rawPolicies[0],
     );
+  }
+
+  async purge(principal: PrincipalObject): Promise<number> {
+    return this.repository.destroyByPrincipal(principal);
   }
 
   get repository(): Storage {

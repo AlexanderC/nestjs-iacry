@@ -56,47 +56,26 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
   static async savePrincipalPolicies(
     principal: PrincipalObject,
     rawPolicies: Array<string | PolicyInterface>,
-    attach = true,
+    attach: boolean,
+    sid?: string,
   ): Promise<number> {
     if (!attach) {
-      await this.destroyByPrincipal(principal);
+      await this.destroyByPrincipal(principal, sid);
     }
 
     const result = await this.bulkCreate(
-      rawPolicies.map((rawPolicy) => ({
-        entity:
-          principal.entity === CoreHelper.ANY
-            ? null
-            : this.normalizePolicyItem(principal.entity),
-        id: principal.id === CoreHelper.ANY ? null : principal.id,
-        policy:
-          typeof rawPolicy === 'string' ? rawPolicy : JSON.stringify(rawPolicy),
-      })),
+      rawPolicies.map((rawPolicy) =>
+        this.rawPolicyToPayload(principal, rawPolicy),
+      ),
     );
 
     return result.length;
   }
 
-  static async savePrincipalPolicyBySid(
+  static async destroyByPrincipal(
     principal: PrincipalObject,
-    sid: string,
-    rawPolicy: string | PolicyInterface,
+    sid?: string,
   ): Promise<number> {
-    await this.upsert({
-      sid,
-      entity:
-        principal.entity === CoreHelper.ANY
-          ? null
-          : this.normalizePolicyItem(principal.entity),
-      id: principal.id === CoreHelper.ANY ? null : principal.id,
-      policy:
-        typeof rawPolicy === 'string' ? rawPolicy : JSON.stringify(rawPolicy),
-    });
-
-    return 1;
-  }
-
-  static async destroyByPrincipal(principal: PrincipalObject): Promise<number> {
     const payload = {
       where: {
         entity: {
@@ -105,6 +84,7 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
         id: {
           [Op.or]: [null], // select for global scope
         },
+        sid,
       },
     };
 
@@ -124,8 +104,8 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
       payload.where.id[Op.or].push(principal.id);
     }
 
-    // remove empty where clause
-    if (!payload.where.entity && !payload.where.id) {
+    // remove an empty where clause
+    if (!payload.where.entity && !payload.where.id && !payload.where.sid) {
       delete payload.where;
     }
 
@@ -176,6 +156,28 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
 
     const entries = await this.findAll(payload);
     return entries.map(({ policy }) => policy);
+  }
+
+  private static rawPolicyToPayload(
+    principal: PrincipalObject,
+    rawPolicy: string | PolicyInterface,
+  ): any {
+    if (typeof rawPolicy === 'string') {
+      rawPolicy = <PolicyInterface>JSON.parse(rawPolicy);
+    }
+
+    return {
+      sid: rawPolicy.Sid || null,
+      entity:
+        !principal.entity || principal.entity === CoreHelper.ANY
+          ? null
+          : this.normalizePolicyItem(principal.entity),
+      id:
+        (!principal.id || principal.id) === CoreHelper.ANY
+          ? null
+          : principal.id,
+      policy: JSON.stringify(rawPolicy),
+    };
   }
 
   private static normalizePolicyItem(item: string): string {

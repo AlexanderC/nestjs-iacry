@@ -103,6 +103,14 @@ export class CoreService extends CoreHelper {
     this.firewall = Firewall.create(this.storage, new Matcher(options.strict));
   }
 
+  /**
+   * Will attach policies to principal
+   *
+   * @use reset(
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity,
+   *        [{ Sid: 'somePolicyName', Effect: Effect.ALLOW, Action: 'book:*'}]:Array<PolicyInterface>,
+   *      )
+   */
   async attach(
     rawPrincipal: Principal | PrincipalObject | Entity | object,
     rawPolicies?: Array<string | PolicyInterface>,
@@ -118,6 +126,14 @@ export class CoreService extends CoreHelper {
     return this.storage.add(principal, rawPolicies);
   }
 
+  /**
+   * Will replace all principal policies with these ones
+   *
+   * @use reset(
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity,
+   *        [{ Sid: 'somePolicyName', Effect: Effect.ALLOW, Action: 'book:*'}]:Array<PolicyInterface>,
+   *      )
+   */
   async reset(
     rawPrincipal: Principal | PrincipalObject | Entity | object,
     rawPolicies?: Array<string | PolicyInterface>,
@@ -135,6 +151,11 @@ export class CoreService extends CoreHelper {
       : this.storage.purge(principal);
   }
 
+  /**
+   * @use retrieve(
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity,
+   *      )
+   */
   async retrieve(
     rawPrincipal: Principal | PrincipalObject | Entity | object,
   ): Promise<Array<PolicyInterface>> {
@@ -154,6 +175,12 @@ export class CoreService extends CoreHelper {
     );
   }
 
+  /**
+   * @use retrieveBySid(
+   *        'somePolicyName',
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity,
+   *      )
+   */
   async retrieveBySid(
     sid: string,
     rawPrincipal: Principal | PrincipalObject | Entity | object,
@@ -174,6 +201,13 @@ export class CoreService extends CoreHelper {
     );
   }
 
+  /**
+   * @use upsertBySid(
+   *        'somePolicyName',
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity,
+   *        [{ Sid: 'somePolicyName', Effect: Effect.ALLOW, Action: 'book:*'}]:Array<PolicyInterface>,
+   *      )
+   */
   async upsertBySid(
     sid: string,
     rawPrincipal: Principal | PrincipalObject | Entity | object,
@@ -193,15 +227,15 @@ export class CoreService extends CoreHelper {
   /**
    * @use grant(
    *        'book:update' | { service: 'book', action: 'update' },
-   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity,
    *        'book:33' | { entity: 'book', id: 33 } | new BookModel(id=33):@\Entity,
    *      )
    *      grant(
    *        'book:update' | { service: 'book', action: 'update' },
-   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity
-   *        'book:33' | { entity: 'book', id: 33 } | new BookModel(id=33):@\Entity
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity,
+   *        'book:33' | { entity: 'book', id: 33 } | new BookModel(id=33):@\Entity,
    *        Effect.DENY,
-   *        'DenyUpdatingBook33ByUser1'
+   *        'DenyUpdatingBook33ByUser1',
    *      )
    */
   async grant(
@@ -232,8 +266,8 @@ export class CoreService extends CoreHelper {
   /**
    * @use isGranted(
    *        'book:update' | { service: 'book', action: 'update' },
-   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity
-   *        'book:33' | { entity: 'book', id: 33 } | new BookModel(id=33):@\Entity
+   *        'user:1' | { entity: 'user', id: 1 } | new UserModel(id=1):@\Entity,
+   *        'book:33' | { entity: 'book', id: 33 } | new BookModel(id=33):@\Entity,
    *      )
    */
   async isGranted(

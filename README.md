@@ -183,9 +183,6 @@ const policies = await firewall.retrieveBySid('Some policy Sid (mainly a name)',
 const deletedPoliciesCount = await firewall.reset(user);
 ```
 
-> Important: When using `sequelize` storage- `firewall.upsertBySid()` supports storing one single 
-> policy per `Sid` for a certain `principal`, throwing a `SequelizeError` otherwise.
-
 Managing a policy by it's Sid might be useful when automating policy assignments.
 E.g. granting `book:update|patch|delete` on books created by the user is possible by upserting
 a system managed policy w/ the sid `system:user:book` as follows:
