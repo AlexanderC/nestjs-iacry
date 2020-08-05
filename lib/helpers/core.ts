@@ -18,6 +18,19 @@ import { WrongPolicyPropFormat } from '../errors/wrong-policy-prop-format.error'
 export abstract class CoreHelper {
   static readonly ANY = <ANY>'*';
 
+  public static encode(
+    policy: PolicyInterface,
+    beatify: boolean = false,
+  ): string {
+    return beatify
+      ? JSON.stringify(policy, null, '  ')
+      : JSON.stringify(policy);
+  }
+
+  public static decode(rawPolicy: string): PolicyInterface {
+    return JSON.parse(rawPolicy);
+  }
+
   public isDynamicVector(
     x:
       | DynamicIdentifier<Action | Resource | Principal>

@@ -34,7 +34,7 @@ export class Policy extends CoreHelper implements PolicyInterface {
     let policy = <PolicyInterface>{};
 
     if (typeof rawPolicy === 'string') {
-      policy = <PolicyInterface>JSON.parse(rawPolicy);
+      policy = Policy.decode(rawPolicy);
     } else {
       policy = clone(rawPolicy);
     }

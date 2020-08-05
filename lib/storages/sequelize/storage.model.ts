@@ -5,7 +5,6 @@ import {
   CreatedAt,
   UpdatedAt,
   DataType,
-  DeletedAt,
   AllowNull,
   PrimaryKey,
   AutoIncrement,
@@ -17,13 +16,6 @@ import { CoreHelper } from '../../helpers/core';
 
 @Table({
   timestamps: true, // add the timestamp attributes (updatedAt, createdAt)
-  indexes: [
-    {
-      name: 'entity_id_sid',
-      fields: ['entity', 'id', 'sid'],
-      unique: true,
-    },
-  ],
 })
 export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
   implements PrincipalObject {
@@ -32,20 +24,23 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
   @Column
   pk: number;
 
+  @Index('policy_sid')
   @AllowNull(true)
   @Column
   sid: string;
 
+  @Index('policy_principal_id')
   @AllowNull(true)
   @Column
   id: string;
 
+  @Index('policy_principal_entity')
   @AllowNull(true)
   @Column
   entity: string;
 
-  @Column(DataType.TEXT)
-  policy: string; // @todo: change to blob?
+  @Column(DataType.BLOB) // 64 kb of data
+  policy: string;
 
   @CreatedAt
   createdAt: Date;
@@ -162,12 +157,11 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
     principal: PrincipalObject,
     rawPolicy: string | PolicyInterface,
   ): any {
-    if (typeof rawPolicy === 'string') {
-      rawPolicy = <PolicyInterface>JSON.parse(rawPolicy);
-    }
+    const policy =
+      typeof rawPolicy === 'string' ? CoreHelper.decode(rawPolicy) : rawPolicy;
 
     return {
-      sid: rawPolicy.Sid || null,
+      sid: policy.Sid || null,
       entity:
         !principal.entity || principal.entity === CoreHelper.ANY
           ? null
@@ -176,7 +170,7 @@ export class PoliciesStorage<T> extends Model<PoliciesStorage<T>>
         (!principal.id || principal.id) === CoreHelper.ANY
           ? null
           : principal.id,
-      policy: JSON.stringify(rawPolicy),
+      policy: CoreHelper.encode(policy),
     };
   }
 

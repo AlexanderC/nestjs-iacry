@@ -1,5 +1,6 @@
 import { Policy } from './policy';
 import { Effect } from './interfaces/policy';
+import { CoreHelper } from './helpers/core';
 
 const FULL_POLICY = {
   Sid: 'FullPolicy',
@@ -15,7 +16,7 @@ const MINIMAL_POLICY = {
 };
 
 function createPolicy(raw: any, fromString = false): Policy {
-  return new Policy(fromString ? JSON.stringify(raw) : raw);
+  return new Policy(fromString ? CoreHelper.encode(raw) : raw);
 }
 
 describe('PolicyInterface', () => {

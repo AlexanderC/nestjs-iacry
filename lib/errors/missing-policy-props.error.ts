@@ -1,12 +1,13 @@
 import { BaseError } from './iacry.error';
 import { PolicyInterface, REQUIRED_PROPS } from '../interfaces/policy';
+import { CoreHelper } from '../helpers/core';
 
 export class MissingPolicyProps extends BaseError {
   constructor(policy: PolicyInterface, ...props) {
     super(
       `Missing required properties >> ${props.join(
         ', ',
-      )}\nFrom: ${JSON.stringify(policy)}`,
+      )}\nFrom: ${CoreHelper.encode(policy, true)}`,
     );
   }
 

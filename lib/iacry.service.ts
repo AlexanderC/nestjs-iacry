@@ -169,9 +169,7 @@ export class CoreService extends CoreHelper {
         );
     const rawPolicies = await this.storage.fetch(principal);
     return rawPolicies.map((rawPolicy) =>
-      typeof rawPolicy === 'string'
-        ? <PolicyInterface>JSON.parse(rawPolicy)
-        : rawPolicy,
+      typeof rawPolicy === 'string' ? CoreHelper.decode(rawPolicy) : rawPolicy,
     );
   }
 
@@ -195,9 +193,7 @@ export class CoreService extends CoreHelper {
         );
     const rawPolicies = await this.storage.fetchBySid(sid, principal);
     return rawPolicies.map((rawPolicy) =>
-      typeof rawPolicy === 'string'
-        ? <PolicyInterface>JSON.parse(rawPolicy)
-        : rawPolicy,
+      typeof rawPolicy === 'string' ? CoreHelper.decode(rawPolicy) : rawPolicy,
     );
   }
 
