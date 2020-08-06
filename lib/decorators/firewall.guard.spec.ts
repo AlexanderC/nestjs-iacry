@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { createMock } from '@golevelup/nestjs-testing';
 import { Controller, Get, UseGuards, ExecutionContext } from '@nestjs/common';
 import { GUARDS_METADATA } from '@nestjs/common/constants';
-import { CoreService } from '../iacry.service';
+import { CoreService } from '../core.service';
 import { Effect } from '../interfaces/policy';
 import { IACRY_OPTIONS } from '../constants';
 import { Firewall } from './firewall';

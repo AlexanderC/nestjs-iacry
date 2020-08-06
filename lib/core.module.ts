@@ -3,7 +3,7 @@ import { ValueProvider } from '@nestjs/common/interfaces';
 import { Options } from './interfaces/module.options';
 import { AsyncOptions } from './interfaces/module-async.options';
 import { OptionsFactory } from './interfaces/module-options.factory';
-import { CoreService } from './iacry.service';
+import { CoreService } from './core.service';
 import { IACRY_OPTIONS } from './constants';
 
 @Global()

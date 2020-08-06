@@ -13,6 +13,7 @@ import {
   DELIMITER,
   DYNAMIC_IDENTIFIER_PROPS_MAPPING,
 } from '../interfaces/policy';
+import { Entity, isEntity, toDynamicIdentifier } from '../decorators/entity';
 import { WrongPolicyPropFormat } from '../errors/wrong-policy-prop-format.error';
 
 export abstract class CoreHelper {
@@ -101,5 +102,51 @@ export abstract class CoreHelper {
     }
 
     return thing;
+  }
+
+  public normalizeDynamicObject(
+    thing:
+      | ActionObject
+      | PrincipalObject
+      | ResourceObject
+      | Entity
+      | Principal
+      | Resource
+      | Action
+      | object,
+    prop?: string,
+  ):
+    | ActionObject
+    | PrincipalObject
+    | ResourceObject
+    | Principal
+    | Resource
+    | Action {
+    return isEntity(thing)
+      ? <ActionObject | PrincipalObject | ResourceObject>(
+          (<unknown>toDynamicIdentifier(thing))
+        )
+      : prop
+      ? <PrincipalObject>(
+          this.normalizeDynamicIdentifier(
+            <
+              | ActionObject
+              | PrincipalObject
+              | ResourceObject
+              | Principal
+              | Resource
+              | Action
+            >thing,
+            prop,
+          )
+        )
+      : <
+          | ActionObject
+          | PrincipalObject
+          | ResourceObject
+          | Principal
+          | Resource
+          | Action
+        >thing;
   }
 }

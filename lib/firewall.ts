@@ -9,7 +9,7 @@ import {
 } from './interfaces/policy';
 import { MatcherResult } from './interfaces/matcher-result';
 import { Matcher } from './matcher';
-import { MemoryStorage } from './storages/memory.storage';
+import { GlobalStorage } from './storages/global.storage';
 import { PolicyVector } from './policy-vector';
 import { Matcher as MatcherInterface } from './interfaces/matcher';
 import { PolicyStorage } from './interfaces/policy-storage';
@@ -24,7 +24,7 @@ export class Firewall extends CoreHelper {
   }
 
   static create(storage?: PolicyStorage, matcher?: MatcherInterface): Firewall {
-    return new this(storage || new MemoryStorage(), matcher || new Matcher());
+    return new this(storage || new GlobalStorage(), matcher || new Matcher());
   }
 
   async isAllowed(

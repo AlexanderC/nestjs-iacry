@@ -6,7 +6,7 @@ import { BaseError } from '../errors/iacry.error';
 export class GlobalStorage implements PolicyStorage {
   readonly readonly: boolean = true;
 
-  constructor(public readonly policies = <Array<string | PolicyInterface>>[]) {}
+  constructor(public policies = <Array<string | PolicyInterface>>[]) {}
 
   async fetch(
     _principal: PrincipalObject,
@@ -23,20 +23,24 @@ export class GlobalStorage implements PolicyStorage {
 
   async save(
     _principal: PrincipalObject,
-    _rawPolicies: Array<string | PolicyInterface>,
+    rawPolicies: Array<string | PolicyInterface>,
   ): Promise<number> {
-    throw this.DisallowedException('save');
+    this.policies = [...rawPolicies];
+    return rawPolicies.length;
   }
 
   async add(
     _principal: PrincipalObject,
-    _rawPolicies: Array<string | PolicyInterface>,
+    rawPolicies: Array<string | PolicyInterface>,
   ): Promise<number> {
-    throw this.DisallowedException('add');
+    this.policies = [...this.policies, ...rawPolicies];
+    return rawPolicies.length;
   }
 
   async purge(_principal: PrincipalObject): Promise<number> {
-    throw this.DisallowedException('purge');
+    const removedCount = this.policies.length;
+    this.policies = [];
+    return removedCount;
   }
 
   saveBySid(
