@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* Add support for mode Sid policies for sequelize ([8b54308](https://github.com/AlexanderC/nestjs-iacry/commit/8b543082dd94f826d43253e851a85bb517b26fbe))
+* Add support for more Sid policies for sequelize ([8b54308](https://github.com/AlexanderC/nestjs-iacry/commit/8b543082dd94f826d43253e851a85bb517b26fbe))
 * Allow handling policies by Sid ([23164dc](https://github.com/AlexanderC/nestjs-iacry/commit/23164dca8ab34908eb5b48b13080e69165537cad))
 
 ### [0.0.5](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.4...v0.0.5) (2020-08-04)

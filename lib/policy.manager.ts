@@ -15,7 +15,7 @@ import {
   Effect,
   SID,
 } from './interfaces/policy';
-import { Entity, isEntity, toDynamicIdentifier } from './decorators/entity';
+import { Entity } from './decorators/entity';
 
 export class PolicyManager extends CoreHelper {
   constructor(protected storage?: PolicyStorage) {
@@ -146,15 +146,14 @@ export class PolicyManager extends CoreHelper {
     const principal = <Principal | PrincipalObject>(
       this.normalizeDynamicObject(rawPrincipal)
     );
+    const policy = {
+      [SID]: sid,
+      [EFFECT]: effect,
+      [ACTION]: rawAction,
+      [RESOURCE]: resource,
+      [PRINCIPAL]: principal,
+    };
 
-    return this.attach(rawPrincipal, [
-      {
-        [SID]: sid,
-        [EFFECT]: effect,
-        [ACTION]: rawAction,
-        [RESOURCE]: resource,
-        [PRINCIPAL]: principal,
-      },
-    ]);
+    return this.attach(rawPrincipal, [policy]);
   }
 }

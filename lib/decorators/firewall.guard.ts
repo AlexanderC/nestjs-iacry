@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { DecoratorError } from '../errors/decorator.error';
-import { CoreService } from '../iacry.service';
+import { CoreService } from '../core.service';
 import { extractDynamicIdentifier as actionExtractor } from './action';
 import { extractDynamicIdentifier as resourceExtractor } from './resource';
 import { extractDynamicIdentifier as principalExtractor } from './principal';
