@@ -26,7 +26,7 @@ export class FirewallGuard implements CanActivate {
 
     if (!action || !principal) {
       throw new DecoratorError(
-        'You must decorate your controller with @IACryFirewall or at least @IACryAction and @IACryResource decorators',
+        'You must decorate your controller with @IACryFirewall or at least @IACryAction and @IACryPrincipal decorators',
       );
     }
 

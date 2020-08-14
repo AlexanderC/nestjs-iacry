@@ -2,8 +2,7 @@ import { ExecutionContext } from '@nestjs/common';
 import * as dotProp from 'dot-prop';
 import { isEntity, toPlainDynamicIdentifier } from './entity';
 import { DecoratorError } from '../errors/decorator.error';
-
-export const VAR_REGEXP = /{(?<var>[^}]+)}/gm;
+import { VAR_REGEXP } from './constants';
 
 export function processTemplate(template: string, context: object): string {
   let match;
@@ -36,8 +35,11 @@ export function processTemplate(template: string, context: object): string {
   return template;
 }
 
+type DIEHook = (value: any, ctx?: ExecutionContext) => any;
+
 export function dynamicIdentifierExtractor<T>(
   metadataField: string,
+  hooks?: { preHook?: DIEHook; postHook?: DIEHook },
 ): (target: object | Function, ctx?: ExecutionContext) => T | any | null {
   return (
     target: object | Function,
@@ -47,7 +49,12 @@ export function dynamicIdentifierExtractor<T>(
       return null;
     }
 
-    const value = Reflect.getMetadata(metadataField, target);
+    const { preHook, postHook } = hooks || {};
+    let value = Reflect.getMetadata(metadataField, target);
+
+    if (preHook) {
+      value = preHook(value, ctx);
+    }
 
     if (!ctx || typeof value !== 'string') {
       return value;
@@ -57,6 +64,12 @@ export function dynamicIdentifierExtractor<T>(
     // request.{session | params | body | query | headers | ip}
     const request = ctx.switchToHttp().getRequest();
 
-    return processTemplate(value, request);
+    value = processTemplate(value, request);
+
+    if (postHook) {
+      value = postHook(value, ctx);
+    }
+
+    return value;
   };
 }

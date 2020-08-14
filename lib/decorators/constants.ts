@@ -7,4 +7,6 @@ export const ID_META_FIELD = `${META_PREFIX}${ID_FIELD.toUpperCase()}`;
 export const ACTION_META_FIELD = `${META_PREFIX}ACTION`;
 export const RESOURCE_META_FIELD = `${META_PREFIX}RESOURCE`;
 export const PRINCIPAL_META_FIELD = `${META_PREFIX}PRINCIPAL`;
-export const CTRL_SERVICE_REGEXP = /Controller$/;
+export const CTRL_SERVICE_REGEXP = /Controller$/i;
+export const CTRL_ACTION_PLACEHOLDER = '$$IACRY_CTRL$$';
+export const VAR_REGEXP = /{(?<var>[^}]+)}/gm;

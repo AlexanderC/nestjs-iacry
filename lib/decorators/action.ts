@@ -1,9 +1,31 @@
+import { ExecutionContext } from '@nestjs/common';
 import { Action, DELIMITER } from '../interfaces/policy';
-import { ACTION_META_FIELD, CTRL_SERVICE_REGEXP } from './constants';
+import {
+  ACTION_META_FIELD,
+  CTRL_SERVICE_REGEXP,
+  CTRL_ACTION_PLACEHOLDER,
+} from './constants';
 import { dynamicIdentifierExtractor } from './helper';
 
 export const extractDynamicIdentifier = dynamicIdentifierExtractor<Action>(
   ACTION_META_FIELD,
+  {
+    preHook(value: any, ctx?: ExecutionContext): any {
+      if (!ctx || value !== CTRL_ACTION_PLACEHOLDER) {
+        return value;
+      }
+
+      const parts = [
+        (ctx.getClass().name || '').replace(CTRL_SERVICE_REGEXP, ''), // "BookController"
+        ctx.getHandler().name, // "update"
+      ];
+
+      return parts
+        .filter(Boolean)
+        .map((part) => part.toLowerCase())
+        .join(DELIMITER); // "book:update"
+    },
+  },
 );
 
 /**
@@ -17,17 +39,11 @@ export function Action(action?: Action): MethodDecorator {
     key: string | symbol,
     descriptor: TypedPropertyDescriptor<any>,
   ) => {
-    if (!action) {
-      let service = target.constructor.name;
-
-      if (CTRL_SERVICE_REGEXP.test(service)) {
-        service = service.replace(CTRL_SERVICE_REGEXP, '');
-      }
-
-      action = `${service.toLowerCase()}${DELIMITER}${String(key)}`;
-    }
-
-    Reflect.defineMetadata(ACTION_META_FIELD, action, descriptor.value);
+    Reflect.defineMetadata(
+      ACTION_META_FIELD,
+      action || CTRL_ACTION_PLACEHOLDER,
+      descriptor.value,
+    );
     return descriptor;
   };
 }

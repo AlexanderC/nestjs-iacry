@@ -55,9 +55,9 @@ async function firewall(
   const ctrl = moduleRef.get<TestController>(TestController);
   const service = moduleRef.get<CoreService>(CoreService);
 
-  const handler = ctrl.check;
-  const [Guard] = Reflect.getMetadata(GUARDS_METADATA, handler);
-  context.getHandler.mockReturnValue(handler);
+  const [Guard] = Reflect.getMetadata(GUARDS_METADATA, ctrl.check);
+  context.getHandler.mockReturnValue(ctrl.check);
+  context.getClass.mockReturnValue(<any>ctrl.constructor);
   context.switchToHttp().getRequest.mockReturnValue({ user: PRINCIPAL_ENTITY });
 
   return { guard: new Guard(service), context };
