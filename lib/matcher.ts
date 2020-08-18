@@ -1,3 +1,4 @@
+import * as micromatch from 'micromatch';
 import {
   Effect,
   Action,
@@ -9,20 +10,15 @@ import {
   ACTION,
   RESOURCE,
   PRINCIPAL,
-  NEGATION,
   DYNAMIC_IDENTIFIER_PROPS_MAPPING,
   ANY,
-  OR,
 } from './interfaces/policy';
 import { MatcherResult } from './interfaces/matcher-result';
-import { Policy } from './policy';
 import { PolicyVector } from './policy-vector';
 import { Matcher as MatcherInterface } from './interfaces/matcher';
 import { CoreHelper } from './helpers/core';
 
 export class Matcher extends CoreHelper implements MatcherInterface {
-  readonly NEGATION_REGEXP = new RegExp(`^\s*${NEGATION}`);
-
   constructor(public readonly strict = false) {
     super();
   }
@@ -104,49 +100,28 @@ export class Matcher extends CoreHelper implements MatcherInterface {
     rawSource: string | number | ANY,
     rawTarget: string | number | ANY,
   ): boolean {
-    const sourceVector = this.normalize(rawSource);
-    const targetVector = this.normalize(rawTarget);
-
-    for (const source of sourceVector) {
-      for (const target of targetVector) {
-        if (
-          source === Policy.ANY ||
-          target === Policy.ANY ||
-          this.matchSingle(source, target)
-        ) {
-          return true;
-        }
-      }
+    if (/\|/.test(rawSource.toString()) || /\|/.test(rawTarget.toString())) {
+      console.log(`source=${this.normalizeValue(rawSource)} target=${this.normalizeValue(rawTarget)} result=${micromatch.isMatch(
+        this.normalizeValue(rawSource, true),
+        this.normalizeValue(rawTarget),
+      ) || micromatch.isMatch(
+        this.normalizeValue(rawTarget, true),
+        this.normalizeValue(rawSource),
+      )}`);
     }
 
-    return false;
+    return micromatch.isMatch(
+      this.normalizeValue(rawSource, true),
+      this.normalizeValue(rawTarget),
+    ) || micromatch.isMatch(
+      this.normalizeValue(rawTarget, true),
+      this.normalizeValue(rawSource),
+    );
   }
 
-  private matchSingle(source, target) {
-    if (!this.isNegated(source) && !this.isNegated(target)) {
-      return source === target;
-    } else if (this.isNegated(source) && this.isNegated(target)) {
-      return this.extractNegated(source) === this.extractNegated(target);
-    } else if (this.isNegated(source)) {
-      return this.extractNegated(source) !== target;
-    } else {
-      return source !== this.extractNegated(target);
-    }
-  }
-
-  private normalize(rawValue: string | number | ANY): Array<string | ANY> {
-    let value = rawValue.toString();
-    return (this.strict ? value : value.toLowerCase())
-      .split(OR)
-      .map((x) => x.trim())
-      .filter(Boolean);
-  }
-
-  private extractNegated(rawValue: string): string {
-    return rawValue.replace(this.NEGATION_REGEXP, '');
-  }
-
-  private isNegated(rawValue: string): boolean {
-    return this.NEGATION_REGEXP.test(rawValue);
+  private normalizeValue(rawValue: string | number | ANY, raw: boolean = false): string {
+    return rawValue.toString().replace(new RegExp(
+      `\\${Matcher.ANY}+`
+    ), Matcher.ANY.repeat(2));
   }
 }

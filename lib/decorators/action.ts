@@ -16,14 +16,14 @@ export const extractDynamicIdentifier = dynamicIdentifierExtractor<Action>(
       }
 
       const parts = [
-        (ctx.getClass().name || '').replace(CTRL_SERVICE_REGEXP, ''), // "BookController"
-        ctx.getHandler().name, // "update"
+        (ctx.getClass().name || '').replace(CTRL_SERVICE_REGEXP, ''), // e.g. BookController
+        ctx.getHandler().name, // e.g. update
       ];
 
       return parts
         .filter(Boolean)
         .map((part) => part.toLowerCase())
-        .join(DELIMITER); // "book:update"
+        .join(DELIMITER); // e.g. book:update
     },
   },
 );

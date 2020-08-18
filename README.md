@@ -32,7 +32,6 @@ Configure policy storage using sequelize adapter:
 import { PoliciesStorageSequelizeModel } from 'nestjs-iacry';
 
 export default class PoliciesStorage extends PoliciesStorageSequelizeModel<PoliciesStorage> {  }
-
 ```
 
 Configure your models:
@@ -230,9 +229,14 @@ interface PolicyInterface {
 Syntax Sugar:
 
 - **DIs might be negated** which would mean that a `book:!33` would match any book but the one with ID=33.
-- **DIs might be piped/or-ed** which would mean that a `book:create|update|!delete` would allow creating and updating BUT deleting a book.
+- **DIs might be piped/or-ed** which would mean that a `book:!(update|delete)` would allow any action BUT updating or deleting a book.
+- **DIs might contain complex match patterns** which would mean that a principal `*/admin:!33` would match an admin user from any namespace but the one with ID=33.
 
-> **Dynamic Identifiers** or **DIs** are considered `Action`, `Resource` and `Principal` properties.
+> More information about how `micromatch` matches strings [can be found here](https://github.com/micromatch/micromatch#matching-features).
+
+> Important: Within the matcher `*` is replaced with `**` automatically, thus a single `*` won't work as of original micromatch docs. 
+
+**Dynamic Identifiers** or **DIs** are considered `Action`, `Resource` and `Principal` properties.
 
 ### Development
 
