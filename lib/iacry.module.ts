@@ -3,12 +3,12 @@ import { ValueProvider } from '@nestjs/common/interfaces';
 import { Options } from './interfaces/module.options';
 import { AsyncOptions } from './interfaces/module-async.options';
 import { OptionsFactory } from './interfaces/module-options.factory';
-import { CoreService } from './core.service';
+import { IACryService } from './iacry.service';
 import { IACRY_OPTIONS } from './constants';
 
 @Global()
 @Module({})
-export class CoreModule {
+export class IACryModule {
   static forRoot(options?: Options): DynamicModule {
     const OptionsProvider: ValueProvider<Options> = {
       provide: IACRY_OPTIONS,
@@ -16,9 +16,9 @@ export class CoreModule {
     };
 
     return {
-      module: CoreModule,
-      providers: [OptionsProvider, CoreService],
-      exports: [CoreService],
+      module: IACryModule,
+      providers: [OptionsProvider, IACryService],
+      exports: [IACryService],
     };
   }
 
@@ -26,10 +26,10 @@ export class CoreModule {
     const providers: Provider[] = this.createAsyncProviders(options);
 
     return {
-      module: CoreModule,
-      providers: [...providers, CoreService],
+      module: IACryModule,
+      providers: [...providers, IACryService],
       imports: options.imports,
-      exports: [CoreService],
+      exports: [IACryService],
     };
   }
 

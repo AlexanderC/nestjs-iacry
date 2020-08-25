@@ -100,16 +100,6 @@ export class Matcher extends CoreHelper implements MatcherInterface {
     rawSource: string | number | ANY,
     rawTarget: string | number | ANY,
   ): boolean {
-    if (/\|/.test(rawSource.toString()) || /\|/.test(rawTarget.toString())) {
-      console.log(`source=${this.normalizeValue(rawSource)} target=${this.normalizeValue(rawTarget)} result=${micromatch.isMatch(
-        this.normalizeValue(rawSource, true),
-        this.normalizeValue(rawTarget),
-      ) || micromatch.isMatch(
-        this.normalizeValue(rawTarget, true),
-        this.normalizeValue(rawSource),
-      )}`);
-    }
-
     return micromatch.isMatch(
       this.normalizeValue(rawSource, true),
       this.normalizeValue(rawTarget),

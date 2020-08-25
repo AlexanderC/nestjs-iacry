@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { createMock } from '@golevelup/nestjs-testing';
 import { Controller, Get, UseGuards, ExecutionContext } from '@nestjs/common';
 import { GUARDS_METADATA } from '@nestjs/common/constants';
-import { CoreService } from '../core.service';
+import { IACryService } from '../iacry.service';
 import { Effect } from '../interfaces/policy';
 import { IACRY_OPTIONS } from '../constants';
 import { Firewall } from './firewall';
@@ -47,13 +47,13 @@ async function firewall(
         provide: IACRY_OPTIONS,
         useValue: { policies: [policy] },
       },
-      CoreService,
+      IACryService,
     ],
   }).compile();
 
   const context = createMock<ExecutionContext>();
   const ctrl = moduleRef.get<TestController>(TestController);
-  const service = moduleRef.get<CoreService>(CoreService);
+  const service = moduleRef.get<IACryService>(IACryService);
 
   const [Guard] = Reflect.getMetadata(GUARDS_METADATA, ctrl.check);
   context.getHandler.mockReturnValue(ctrl.check);

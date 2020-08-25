@@ -1,5 +1,5 @@
 /** Modules **/
-export { CoreModule as IACryModule } from './core.module';
+export { IACryModule } from './iacry.module';
 
 /** Constants **/
 export {
@@ -33,7 +33,7 @@ export {
 export { Cache } from './storages/cache/cache.interface';
 
 /** Services **/
-export { CoreService as IACryService } from './core.service';
+export { IACryService } from './iacry.service';
 
 /** Models **/
 export { PoliciesStorage as PoliciesStorageSequelizeModel } from './storages/sequelize/storage.model';

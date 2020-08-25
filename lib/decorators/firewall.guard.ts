@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { DecoratorError } from '../errors/decorator.error';
-import { CoreService } from '../core.service';
+import { IACryService } from '../iacry.service';
 import { extractDynamicIdentifier as actionExtractor } from './action';
 import { extractDynamicIdentifier as resourceExtractor } from './resource';
 import { extractDynamicIdentifier as principalExtractor } from './principal';
@@ -17,7 +17,7 @@ import { extractDynamicIdentifier as principalExtractor } from './principal';
  */
 @Injectable()
 export class FirewallGuard implements CanActivate {
-  constructor(private readonly service: CoreService) {}
+  constructor(private readonly service: IACryService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const action = actionExtractor(context.getHandler(), context);
@@ -33,7 +33,7 @@ export class FirewallGuard implements CanActivate {
     return this.service.isGranted(
       action,
       principal,
-      resource || CoreService.ANY,
+      resource || IACryService.ANY,
     );
   }
 }

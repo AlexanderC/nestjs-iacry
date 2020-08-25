@@ -31,7 +31,7 @@ import { CachedStorage } from './storages/cached.storage';
 import { PolicyManager } from './policy.manager';
 
 @Injectable()
-export class CoreService extends PolicyManager {
+export class IACryService extends PolicyManager {
   private firewall: Firewall;
 
   constructor(@Inject(IACRY_OPTIONS) private readonly options: Options) {
