@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.7...v0.0.8) (2020-08-25)
+
+
+### Bug Fixes
+
+* Rename module and service as it might t might had caused issues w/ DI ([4c4f0ac](https://github.com/AlexanderC/nestjs-iacry/commit/4c4f0ace33a7e084ceee344eba02d0d613c3e35c))
+
 ### [0.0.7](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.6...v0.0.7) (2020-08-18)
 
 ### [0.0.6](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.5...v0.0.6) (2020-08-12)
