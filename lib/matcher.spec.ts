@@ -8,6 +8,11 @@ const ALLOW_POLICY = {
   Action: 'company:create',
   Resource: 'user',
 };
+const MULTIPLE_ACTION_ALLOW_POLICY = {
+  Effect: Effect.ALLOW,
+  Action: [ 'company:create', 'company:otheraction' ],
+  Resource: 'user',
+};
 const ORED_ALLOW_POLICY = {
   Effect: Effect.ALLOW,
   Action: 'company:!(delete|update)',
@@ -67,6 +72,32 @@ describe('Matcher', () => {
       expect(result.deny.length).toEqual(1);
       expect(result.abstain.length).toEqual(1);
       expect(result.allow[0].toJSON()).toEqual(ALLOW_POLICY);
+      expect(result.deny[0].toJSON()).toEqual(DENY_POLICY);
+      expect(result.abstain[0].toJSON()).toEqual(ABSTAIN_POLICY);
+    }).not.toThrow();
+  });
+
+  it('should proper match given policies for an array of actions', () => {
+    expect.assertions(8);
+    expect(() => {
+      const matcher = new Matcher();
+      const policies = PolicyVector.create(
+        MULTIPLE_ACTION_ALLOW_POLICY,
+        DENY_POLICY,
+        ABSTAIN_POLICY,
+      );
+      const result = matcher.match(
+        MATCH.RESOURCE,
+        MATCH.ACTION,
+        MATCH.PRINCIPAL,
+        policies,
+      );
+
+      expect(Object.keys(result)).toMatchObject(['allow', 'deny', 'abstain']);
+      expect(result.allow.length).toEqual(1);
+      expect(result.deny.length).toEqual(1);
+      expect(result.abstain.length).toEqual(1);
+      expect(result.allow[0].toJSON()).toEqual(MULTIPLE_ACTION_ALLOW_POLICY);
       expect(result.deny[0].toJSON()).toEqual(DENY_POLICY);
       expect(result.abstain[0].toJSON()).toEqual(ABSTAIN_POLICY);
     }).not.toThrow();

@@ -56,12 +56,15 @@ export class Matcher extends CoreHelper implements MatcherInterface {
         PRINCIPAL,
       );
 
-      const match = resourceMatch && actionMatch && principalMatch;
-
-      if (match && policy.Effect === Effect.ALLOW) {
-        result.allow.push(policy);
-      } else if (match && policy.Effect === Effect.DENY) {
-        result.deny.push(policy);
+      if (resourceMatch && actionMatch && principalMatch) {
+        switch (policy.Effect) {
+          case Effect.ALLOW:
+            result.allow.push(policy);
+            break;
+          case Effect.DENY:
+          default: // something went extremely wrong o_O
+            result.deny.push(policy);
+        }
       } else {
         result.abstain.push(policy);
       }
@@ -75,10 +78,16 @@ export class Matcher extends CoreHelper implements MatcherInterface {
     targets: Array<ActionObject | ResourceObject | PrincipalObject>,
     prop: string,
   ): boolean {
+    // match anything if the policy doesn't specify any rules
+    if (targets.length <= 0) {
+      return true;
+    }
+
     return (
       targets
         .map((target) => this.matchDynamicIdentifier(source, target, prop))
-        .filter(Boolean).length === targets.length
+        // match any of the element of action or resource or principal
+        .filter(Boolean).length > 0
     );
   }
 
