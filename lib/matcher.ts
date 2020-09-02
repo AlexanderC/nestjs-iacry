@@ -119,7 +119,13 @@ export class Matcher extends CoreHelper implements MatcherInterface {
   }
 
   private normalizeValue(rawValue: string | number | ANY, raw: boolean = false): string {
-    return rawValue.toString().replace(new RegExp(
+    let value = rawValue.toString();
+
+    if (!this.strict) {
+      value = value.toLowerCase();
+    }
+
+    return raw ? value : value.replace(new RegExp(
       `\\${Matcher.ANY}+`
     ), Matcher.ANY.repeat(2));
   }
