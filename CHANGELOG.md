@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.9...v0.0.10) (2020-09-02)
+
+
+### Bug Fixes
+
+* Matcher case insensitive on no strict mode ([c69eed9](https://github.com/AlexanderC/nestjs-iacry/commit/c69eed9c0ab40821fb9e688034a30e94e5e08b86))
+
 ### [0.0.9](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.8...v0.0.9) (2020-08-25)
 
 
