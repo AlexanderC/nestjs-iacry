@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  **[WIP]** An Identity and Access Control (Management) module for Nest framework (node.js) highly inspired by the <a href="https://aws.amazon.com/iam/">AWS IAM</a>.
+  An Identity and Access Control (Management) module for Nest framework (node.js) highly inspired by the <a href="https://aws.amazon.com/iam/">AWS IAM</a>.
 </p>
 
 <p align="center">
