@@ -9,17 +9,12 @@
     "noLib": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
+    "target": "ES2017",
     "sourceMap": false,
     "outDir": "./dist",
     "rootDir": "./lib",
     "lib": ["es7"]
   },
-  "include": [
-    "lib/**/*"
-  ],
-  "exclude": [
-    "node_modules", 
-    "**/*.spec.ts"
-  ]
+  "include": ["lib/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }
