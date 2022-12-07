@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.10...v0.0.12) (2022-12-07)
+
+
+### Bug Fixes
+
+* Dependencies issues ([1d4d56e](https://github.com/AlexanderC/nestjs-iacry/commit/1d4d56ef2e69894c955a07d7710f59dc66191a38))
+
 ### [0.0.10](https://github.com/AlexanderC/nestjs-iacry/compare/v0.0.9...v0.0.10) (2020-09-02)
 
 
