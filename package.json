@@ -54,7 +54,7 @@
   },
   "optionalDependencies": {
     "ioredis": "^5.2.4",
-    "sequelize": "6.26.0",
+    "sequelize": "6.28.2",
     "sequelize-typescript": "2.1.5"
   },
   "devDependencies": {
@@ -82,7 +82,7 @@
     "prettier": "^2.8.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "sequelize": "6.26.0",
+    "sequelize": "6.28.2",
     "sequelize-typescript": "2.1.5",
     "standard-version": "^9.5.0",
     "supertest": "^6.3.2",
