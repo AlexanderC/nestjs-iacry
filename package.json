@@ -1,6 +1,6 @@
 {
   "name": "nestjs-iacry",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "description": "NestJS - an identity and access control module inspired by AWS IAM (@iac, @iam)",
   "keywords": [
