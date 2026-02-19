@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { createMock } from '@golevelup/nestjs-testing';
 import { Controller, Get, UseGuards, ExecutionContext } from '@nestjs/common';
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 import { IACryService } from '../iacry.service';
@@ -51,14 +50,29 @@ async function firewall(
     ],
   }).compile();
 
-  const context = createMock<ExecutionContext>();
+  const mockRequest = { user: PRINCIPAL_ENTITY };
+  const mockHttpArgs = {
+    getRequest: jest.fn().mockReturnValue(mockRequest),
+    getResponse: jest.fn(),
+    getNext: jest.fn(),
+  };
+  const context = {
+    switchToHttp: jest.fn().mockReturnValue(mockHttpArgs),
+    getHandler: jest.fn(),
+    getClass: jest.fn(),
+    getArgs: jest.fn(),
+    getArgByIndex: jest.fn(),
+    switchToRpc: jest.fn(),
+    switchToWs: jest.fn(),
+    getType: jest.fn(),
+  } as unknown as jest.Mocked<ExecutionContext>;
+
   const ctrl = moduleRef.get<TestController>(TestController);
   const service = moduleRef.get<IACryService>(IACryService);
 
   const [Guard] = Reflect.getMetadata(GUARDS_METADATA, ctrl.check);
-  context.getHandler.mockReturnValue(ctrl.check);
-  context.getClass.mockReturnValue(<any>ctrl.constructor);
-  context.switchToHttp().getRequest.mockReturnValue({ user: PRINCIPAL_ENTITY });
+  (context.getHandler as jest.Mock).mockReturnValue(ctrl.check);
+  (context.getClass as jest.Mock).mockReturnValue(<any>ctrl.constructor);
 
   return { guard: new Guard(service), context };
 }

@@ -49,7 +49,6 @@ export class IACryModule {
   private static createAsyncOptionsProvider(options: AsyncOptions): Provider {
     if (options.useFactory) {
       return {
-        name: IACRY_OPTIONS,
         provide: IACRY_OPTIONS,
         useFactory: options.useFactory,
         inject: options.inject || [],
@@ -57,7 +56,6 @@ export class IACryModule {
     }
 
     return {
-      name: IACRY_OPTIONS,
       provide: IACRY_OPTIONS,
       useFactory: async (optionsFactory: OptionsFactory) => {
         return optionsFactory.createOptions();

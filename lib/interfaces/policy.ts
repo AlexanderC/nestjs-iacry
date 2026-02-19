@@ -37,7 +37,7 @@ export interface PrincipalObject {
 export type Principal = string | PrincipalObject;
 export type DynamicIdentifierItem<T> = {
   value: T;
-  parse(thing: T): Array<string | ANY>;
+  parse(): ActionObject | ResourceObject | PrincipalObject;
 };
 export type DynamicIdentifier<T> = T | DynamicIdentifierItem<T>;
 export type DynamicIdentifierVector<T> = Array<DynamicIdentifier<T>>;

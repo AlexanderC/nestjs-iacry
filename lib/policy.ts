@@ -1,4 +1,4 @@
-import * as clone from 'clone';
+import clone from 'clone';
 import {
   PolicyInterface,
   Effect,
@@ -56,7 +56,9 @@ export class Policy extends CoreHelper implements PolicyInterface {
         return [this[prop].parse()];
       }
 
-      return this[prop].map((item) => item.parse());
+      return (
+        this[prop] as DynamicIdentifierVector<Action | Resource | Principal>
+      ).map((item: any) => item.parse());
     }
 
     return this[prop];

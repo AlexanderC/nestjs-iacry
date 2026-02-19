@@ -4,6 +4,7 @@ export { IACryModule } from './iacry.module';
 /** Constants **/
 export {
   SEQUELIZE_STORAGE,
+  TYPEORM_STORAGE,
   IOREDIS_CACHE,
   IS_ALLOWED,
   IS_ALLOWED_ANY,
@@ -37,6 +38,7 @@ export { IACryService } from './iacry.service';
 
 /** Models **/
 export { PoliciesStorage as PoliciesStorageSequelizeModel } from './storages/sequelize/storage.model';
+export { PoliciesStorageEntity as PoliciesStorageTypeOrmEntity } from './storages/typeorm/storage.entity';
 
 /** Decorators */
 export { Entity as IACryEntity } from './decorators/entity';

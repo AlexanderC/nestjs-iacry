@@ -1,4 +1,4 @@
-import * as micromatch from 'micromatch';
+import micromatch from 'micromatch';
 import {
   Effect,
   Action,
@@ -33,7 +33,7 @@ export class Matcher extends CoreHelper implements MatcherInterface {
     const action = this.normalizeDynamicIdentifier(rawAction, ACTION);
     const principal = this.normalizeDynamicIdentifier(rawPrincipal, PRINCIPAL);
 
-    let result = <MatcherResult>{
+    const result = <MatcherResult>{
       allow: [],
       deny: [],
       abstain: [],
@@ -109,24 +109,30 @@ export class Matcher extends CoreHelper implements MatcherInterface {
     rawSource: string | number | ANY,
     rawTarget: string | number | ANY,
   ): boolean {
-    return micromatch.isMatch(
-      this.normalizeValue(rawSource, true),
-      this.normalizeValue(rawTarget),
-    ) || micromatch.isMatch(
-      this.normalizeValue(rawTarget, true),
-      this.normalizeValue(rawSource),
+    return (
+      micromatch.isMatch(
+        this.normalizeValue(rawSource, true),
+        this.normalizeValue(rawTarget),
+      ) ||
+      micromatch.isMatch(
+        this.normalizeValue(rawTarget, true),
+        this.normalizeValue(rawSource),
+      )
     );
   }
 
-  private normalizeValue(rawValue: string | number | ANY, raw: boolean = false): string {
+  private normalizeValue(
+    rawValue: string | number | ANY,
+    raw: boolean = false,
+  ): string {
     let value = rawValue.toString();
 
     if (!this.strict) {
       value = value.toLowerCase();
     }
 
-    return raw ? value : value.replace(new RegExp(
-      `\\${Matcher.ANY}+`
-    ), Matcher.ANY.repeat(2));
+    return raw
+      ? value
+      : value.replace(new RegExp(`\\${Matcher.ANY}+`), Matcher.ANY.repeat(2));
   }
 }

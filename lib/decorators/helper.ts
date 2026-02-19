@@ -1,5 +1,5 @@
 import { ExecutionContext } from '@nestjs/common';
-import * as dotProp from 'dot-prop';
+import dotProp from 'dot-prop';
 import { isEntity, toPlainDynamicIdentifier } from './entity';
 import { DecoratorError } from '../errors/decorator.error';
 import { VAR_REGEXP } from './constants';
@@ -14,8 +14,8 @@ export function processTemplate(template: string, context: object): string {
     }
 
     // The result can be accessed through the `m`-variable.
-    let [definition, varPath] = match;
-    varPath = varPath.trim();
+    const [definition, rawVarPath] = match;
+    const varPath = rawVarPath.trim();
 
     if (!dotProp.has(context, varPath)) {
       throw new DecoratorError(

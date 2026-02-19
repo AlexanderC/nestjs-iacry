@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Firewall } from './firewall';
 import { PolicyStorage } from './interfaces/policy-storage';
 import { SequelizeStorage } from './storages/sequelize.storage';
+import { TypeOrmStorage } from './storages/typeorm.storage';
 import { MultipleStorage } from './storages/multiple.storage';
 import { GlobalStorage } from './storages/global.storage';
 import { BaseError } from './errors/iacry.error';
@@ -10,6 +11,7 @@ import { Options } from './interfaces/module.options';
 import {
   IACRY_OPTIONS,
   SEQUELIZE_STORAGE,
+  TYPEORM_STORAGE,
   IOREDIS_CACHE,
   IS_ALLOWED,
   IS_ALLOWED_ANY,
@@ -24,7 +26,7 @@ import {
   PrincipalObject,
 } from './interfaces/policy';
 import { CoreHelper } from './helpers/core';
-import { Entity, isEntity, toDynamicIdentifier } from './decorators/entity';
+import { Entity } from './decorators/entity';
 import { Cache } from './storages/cache/cache.interface';
 import { IoRedis } from './storages/cache/ioredis';
 import { CachedStorage } from './storages/cached.storage';
@@ -80,6 +82,11 @@ export class IACryService extends PolicyManager {
             case SEQUELIZE_STORAGE:
               (this.storage as MultipleStorage).storages.push(
                 new SequelizeStorage(options.storageRepository),
+              );
+              break;
+            case TYPEORM_STORAGE:
+              (this.storage as MultipleStorage).storages.push(
+                new TypeOrmStorage(options.storageRepository),
               );
               break;
             default:
