@@ -127,26 +127,26 @@ export abstract class CoreHelper {
           (<unknown>toDynamicIdentifier(thing))
         )
       : prop
-      ? <PrincipalObject>(
-          this.normalizeDynamicIdentifier(
-            <
-              | ActionObject
-              | PrincipalObject
-              | ResourceObject
-              | Principal
-              | Resource
-              | Action
-            >thing,
-            prop,
+        ? <PrincipalObject>(
+            this.normalizeDynamicIdentifier(
+              <
+                | ActionObject
+                | PrincipalObject
+                | ResourceObject
+                | Principal
+                | Resource
+                | Action
+              >thing,
+              prop,
+            )
           )
-        )
-      : <
-          | ActionObject
-          | PrincipalObject
-          | ResourceObject
-          | Principal
-          | Resource
-          | Action
-        >thing;
+        : <
+            | ActionObject
+            | PrincipalObject
+            | ResourceObject
+            | Principal
+            | Resource
+            | Action
+          >thing;
   }
 }

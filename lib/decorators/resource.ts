@@ -2,9 +2,8 @@ import { Resource } from '../interfaces/policy';
 import { RESOURCE_META_FIELD } from './constants';
 import { dynamicIdentifierExtractor } from './helper';
 
-export const extractDynamicIdentifier = dynamicIdentifierExtractor<Resource>(
-  RESOURCE_META_FIELD,
-);
+export const extractDynamicIdentifier =
+  dynamicIdentifierExtractor<Resource>(RESOURCE_META_FIELD);
 
 /**
  * @use @Resource('book:{params.id}')

@@ -2,9 +2,8 @@ import { Principal } from '../interfaces/policy';
 import { PRINCIPAL_META_FIELD, REQUEST_USER } from './constants';
 import { dynamicIdentifierExtractor } from './helper';
 
-export const extractDynamicIdentifier = dynamicIdentifierExtractor<Principal>(
-  PRINCIPAL_META_FIELD,
-);
+export const extractDynamicIdentifier =
+  dynamicIdentifierExtractor<Principal>(PRINCIPAL_META_FIELD);
 
 /**
  * @use @Principal() // extracts request user: User:@\Entity

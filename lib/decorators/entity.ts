@@ -85,8 +85,8 @@ export function Entity(options?: EntityOptions): ClassDecorator {
         options && options.nameField
           ? instance[options.nameField]
           : options && options.name
-          ? options.name
-          : target.name.toLowerCase(),
+            ? options.name
+            : target.name.toLowerCase(),
       target,
     );
     Reflect.defineMetadata(
